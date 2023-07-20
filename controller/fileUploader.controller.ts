@@ -7,7 +7,6 @@ import { Conference } from "../models/conference.model";
 
 
 export async function editLogoConf(req: Request, res: Response) {
-    console.log(req.params);
     
     try {
         let edit = await Conference.findByIdAndUpdate(req.params.confId, {

@@ -24,7 +24,6 @@ export async function getLinkedinUser(req: Request, res: Response) {
   // if(!(accessToken === null || userProfile === null || userEmail === null)) {
   let user = await userBuilder({ firstName, lastName, profilePicture }, email);
   let resStatus = 200;
-  console.log(user._id);
   // }
   res.status(resStatus).json({ token: accessToken, userId: user });
 }

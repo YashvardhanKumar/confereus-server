@@ -24,7 +24,6 @@ export async function fetchConferences(req: Request, res: Response) {
                 }
             },
         ]);
-        console.log(data);
 
         res.json({ status: true, data });
 
@@ -40,14 +39,12 @@ export async function addConference(req: Request<{ id: string }>, res: Response)
     const id = req.params.id;
     // let user = await User.findById(id);
     // const _id = new Types.ObjectId(id);
-    console.log(req.params);
 
     try {
 
         let data = new Conference({ subject, about, startTime, endTime, admin: id });
         await data.save();
         // let userList = await User.find();
-        console.log(data);
         data = await data.populate('events')
 
         res.json({ status: true, data });
@@ -59,7 +56,6 @@ export async function addConference(req: Request<{ id: string }>, res: Response)
 
 export async function editConference(req: Request<{ id: string, confId: string }>, res: Response) {
     const conferenceId = req.params.confId;
-    console.log(req.body.data);
 
     try {
         let data = await Conference.findByIdAndUpdate(conferenceId, {
@@ -103,11 +99,9 @@ export async function registerConference(req: Request<{ id: string, confId: stri
 
 export async function fetchRegisteredConferences(req: Request<{ id: string }>, res: Response) {
     const userId = req.params.id;
-    console.log(userId + 'yash');
     
     try {
         let data = await Conference.find({ registered:  new Types.ObjectId(userId) }).sort({startTime: 1}).populate('events');
-        console.log(data);
         
         res.json({ status: true, data });
 

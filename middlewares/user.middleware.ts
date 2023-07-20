@@ -51,7 +51,6 @@ export async function checkPassword(req: Request, res: Response, next: NextFunct
     try {
         let user = await User.findOne({ email: req.body.email });
         /* @ts-ignore */
-        console.log(req.body.password,);
         /* @ts-ignore */
         const isMatch = await bcrypt.compare(req.body.password, req.userPass);
         if (isMatch) {
@@ -97,8 +96,6 @@ export async function sendOTPToMail(req: Request, res: Response, next: NextFunct
                 </div>`
     }
     const info = await transporter.sendMail(message);
-    console.log('Message sent : %s', info.messageId);
-    console.log(stringOTP);
 
     const otpSalt = await bcrypt.genSalt(10);
     const encryptedOTP = await bcrypt.hash(stringOTP, otpSalt);
@@ -108,13 +105,9 @@ export async function sendOTPToMail(req: Request, res: Response, next: NextFunct
 }
 
 export async function verifyOTP(req: Request, res: Response, next: NextFunction) {
-    console.log(req.body);
     const bcrypt_otp_token = req.body.encrypted_otp_token;
-    console.log(bcrypt_otp_token);
     let bcryptOTP = UserService.verifyToken(bcrypt_otp_token) as JwtPayload;
-    console.log(bcryptOTP);
     const success = await bcrypt.compare(req.body.otp, bcryptOTP.otp);
-    console.log(success)
     if (success) {
         return next();
     } else {
@@ -124,7 +117,6 @@ export async function verifyOTP(req: Request, res: Response, next: NextFunction)
 
 export async function isTokenNotExpired(req: Request, res: Response, next: NextFunction) {
     let accessToken = req.headers['authorization'];
-    console.log(accessToken);
     accessToken = accessToken.slice(7, accessToken.length)
 
     try {
@@ -133,7 +125,6 @@ export async function isTokenNotExpired(req: Request, res: Response, next: NextF
             const refreshToken = req.body.login_refresh_token;
             let blacklist = await Blacklist.findOne({ refreshToken: refreshToken });
             let data = UserService.verifyToken(refreshToken) as JwtPayload;
-            console.log(data);
 
             if (blacklist || !data) {
                 res.json({ status: false, success: "Session Expired!" })
@@ -163,7 +154,6 @@ export async function isTokenNotExpired(req: Request, res: Response, next: NextF
         const refreshToken = req.body.login_refresh_token;
         let blacklist = await Blacklist.findOne({ refreshToken: refreshToken });
         let data = UserService.verifyToken(refreshToken) as JwtPayload;
-        console.log(data);
 
         if (blacklist || !data) {
             res.json({ status: false, success: "Session Expired!" })
@@ -182,7 +172,6 @@ export async function isTokenNotExpired(req: Request, res: Response, next: NextF
 }
 export async function checkAccessToken(req: Request, res: Response, next: NextFunction) {
     let accessToken = req.headers['authorization'];
-    console.log(accessToken);
     accessToken = accessToken.slice(7, accessToken.length)
 
     if (UserService.verifyToken(accessToken)) {
@@ -196,7 +185,6 @@ export async function checkAccessToken(req: Request, res: Response, next: NextFu
 
 export async function checkTokenForLogin(req: Request, res: Response, next: NextFunction) {
     let accessToken = req.headers['authorization'];
-    console.log(accessToken);
     accessToken = accessToken.slice(7, accessToken.length)
     let aData = UserService.verifyToken(accessToken);
 
@@ -209,7 +197,6 @@ export async function checkTokenForLogin(req: Request, res: Response, next: Next
         const refreshToken = req.body.login_refresh_token;
         let blacklist = await Blacklist.findOne({ refreshToken: refreshToken });
         let data = UserService.verifyToken(refreshToken) as JwtPayload;
-        console.log(data);
 
         if (blacklist || !data) {
             res.json({ status: false, success: "Session Expired!" })

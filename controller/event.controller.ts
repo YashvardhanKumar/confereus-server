@@ -4,7 +4,6 @@ import mongoose, { Schema, Types } from "mongoose";
 
 export async function getEvent(req: Request, res: Response) {
     const confId = req.params.confId;
-    console.log(req.params);
     const { ObjectId } = Types;
     try {
         let data = await Conference.aggregate([
@@ -22,7 +21,6 @@ export async function getEvent(req: Request, res: Response) {
             },
             { $limit: 1 },
         ]);
-        console.log(data);
 
         res.json({ status: true, data: data[0].events });
     } catch (error) {
@@ -52,7 +50,6 @@ export async function getEvent(req: Request, res: Response) {
 
 export async function editEvent(req: Request<{ id: string, confId: string, eventId: string }>, res: Response) {
     const eventId = req.params.eventId;
-    console.log(req.body.data);
 
     try {
         let data = await Event.findByIdAndUpdate(eventId,

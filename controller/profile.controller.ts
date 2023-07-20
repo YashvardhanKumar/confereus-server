@@ -7,7 +7,6 @@ import { Types } from "mongoose";
 
 export async function fetchProfile(req: Request, res: Response) {
     const id = req.params.id;
-    console.log(id);
     
     const { ObjectId } = Types;
     try {
@@ -47,7 +46,6 @@ export async function fetchProfile(req: Request, res: Response) {
 
         ]);
         // .findById(id).populate(['workExperience', 'education', 'skills']);
-        console.log(data);
 
         res.json({ status: true, data: data[0] });
 
@@ -62,7 +60,6 @@ export async function editProfile(req: Request, res: Response) {
     const id = req.params.id;
     try {
         const data = await User.findByIdAndUpdate(id, { $set: req.body.data });
-        console.log(data);
 
         res.json({ status: true, data });
 
@@ -78,7 +75,6 @@ export async function addWorkSpace(req: Request, res: Response) {
     try {
         const data = new WorkExperience(req.body.data);
         await data.save();
-        console.log(data);
         
         const user = await User.findByIdAndUpdate(id, { $push: { workExperience: data._id } });
 
@@ -100,7 +96,6 @@ export async function editWorkSpace(req: Request, res: Response) {
         // const data = new WorkExperience(req.body);
         // let workExperience = user.workExperience;
         // workExperience.push(data);
-        console.log(data);
 
         res.json({ status: true, data });
 
@@ -212,7 +207,6 @@ export async function editSkill(req: Request, res: Response) {
         // const data = new WorkExperience(req.body);
         // let workExperience = user.workExperience;
         // workExperience.push(data);
-        console.log(data);
         
         res.json({ status: true, data });
 
