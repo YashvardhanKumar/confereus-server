@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "npm install && tsc",
+    "start": "node ./dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npx tsc && nodemon .\\dist\\index",
     "serve": "nodemon index"
   },
   "keywords": [],
