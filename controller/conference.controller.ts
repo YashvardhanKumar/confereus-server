@@ -21,6 +21,74 @@ export async function fetchConferences(req: Request, res: Response) {
                     pipeline: [
                         { $sort: { startTime: 1 } }
                     ]
+                },
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'admin',
+                    foreignField: '_id',
+                    as: 'admin_data',
+                    pipeline: [
+                        {
+                            $lookup: {
+                                from: 'work_experiences',
+                                localField: 'workExperience',
+                                foreignField: '_id',
+                                as: 'workExperience',
+                            }
+                        },
+                        {
+                            $lookup: {
+                                from: 'educations',
+                                localField: 'education',
+                                foreignField: '_id',
+                                as: 'education',
+                            }
+                        },
+                        {
+                            $lookup: {
+                                from: 'skills',
+                                localField: 'skills',
+                                foreignField: '_id',
+                                as: 'skills',
+                            }
+                        },
+                    ]
+                }
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'reviewer',
+                    foreignField: '_id',
+                    as: 'reviewer_data',
+                    pipeline: [
+                        {
+                            $lookup: {
+                                from: 'work_experiences',
+                                localField: 'workExperience',
+                                foreignField: '_id',
+                                as: 'workExperience',
+                            }
+                        },
+                        {
+                            $lookup: {
+                                from: 'educations',
+                                localField: 'education',
+                                foreignField: '_id',
+                                as: 'education',
+                            }
+                        },
+                        {
+                            $lookup: {
+                                from: 'skills',
+                                localField: 'skills',
+                                foreignField: '_id',
+                                as: 'skills',
+                            }
+                        },
+                    ]
                 }
             },
         ]);
@@ -35,18 +103,17 @@ export async function fetchConferences(req: Request, res: Response) {
 
 
 export async function addConference(req: Request<{ id: string }>, res: Response) {
-    const { subject, about, startTime, endTime } = req.body.data;
+    const { subject, about, admin, startTime, endTime } = req.body.data;
     const id = req.params.id;
     // let user = await User.findById(id);
     // const _id = new Types.ObjectId(id);
 
     try {
 
-        let data = new Conference({ subject, about, startTime, endTime, admin: id });
+        let data = new Conference({ subject, about, startTime, endTime, admin, creator: id });
         await data.save();
         // let userList = await User.find();
         data = await data.populate('events')
-
         res.json({ status: true, data });
     } catch (error) {
         console.log(error);
@@ -96,12 +163,26 @@ export async function registerConference(req: Request<{ id: string, confId: stri
     }
     res.json({ status: true });
 }
+export async function customizeRoles(req: Request<{ id: string, confId: string }>, res: Response) {
+    const conferenceId = req.params.confId;
+    const userId = req.params.id;
+    const {reviewer, admin } = req.body.data;
+    try {
+        let data = await Conference.findByIdAndUpdate(conferenceId, {$set: {reviewer, admin}});
+
+    } catch (error) {
+        console.log(error);
+        res.json({ status: false, message: "Something went wrong" });
+    }
+    res.json({ status: true });
+}
 
 export async function fetchRegisteredConferences(req: Request<{ id: string }>, res: Response) {
     const userId = req.params.id;
     
     try {
         let data = await Conference.find({ registered:  new Types.ObjectId(userId) }).sort({startTime: 1}).populate('events');
+        console.log(data);
         
         res.json({ status: true, data });
 

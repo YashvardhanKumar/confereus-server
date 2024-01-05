@@ -32,7 +32,7 @@ function fetchConferences(req, res) {
                     }
                 },
             ]);
-            console.log(data);
+            // console.log(data);
             res.json({ status: true, data });
         }
         catch (error) {
@@ -48,12 +48,12 @@ function addConference(req, res) {
         const id = req.params.id;
         // let user = await User.findById(id);
         // const _id = new Types.ObjectId(id);
-        console.log(req.params);
+        // console.log(req.params);
         try {
             let data = new conference_model_1.Conference({ subject, about, startTime, endTime, admin: id });
             yield data.save();
             // let userList = await User.find();
-            console.log(data);
+            // console.log(data);
             data = yield data.populate('events');
             res.json({ status: true, data });
         }

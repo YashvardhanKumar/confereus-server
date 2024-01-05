@@ -10,7 +10,7 @@ const urlToGetUserEmail = 'https://api.linkedin.com/v2/clientAwareMemberHandles?
 export async function getLinkedinUser(req: Request, res: Response) {
   const { firstName, lastName, profilePicture, email } = req.body;
 
-  console.log(req.body);
+  // console.log(req.body);
   const accessToken = UserService.generateToken({ email }, 15 * 60);
   const refreshToken = UserService.generateToken({ email }, 30 * 24 * 60 * 60);
   res.cookie("login_access_token", accessToken);

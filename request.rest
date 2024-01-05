@@ -2,7 +2,7 @@ POST http://127.0.0.1:3000/login HTTP/1.1
 Content-Type: application/json
 
 {
-    # "name": "Yash",
+    "name": "Yash",
     "email": "yashram9798@gmail.com",
     "password": "12345678"
     # "dob": "2020-03-03"

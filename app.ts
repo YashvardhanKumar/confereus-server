@@ -13,6 +13,7 @@ import profileRouter from './routes/user/profile/profile.router';
 import eventRoute from './routes/user/conference/event.router';
 import {diskStorage} from 'multer';
 import path from 'path';
+import abstractRoute from './routes/user/conference/abstract.router';
 declare module 'express-session' {
     interface SessionData {
         user: { [key: string]: any };
@@ -40,6 +41,7 @@ app.use('/', userRouter);
 app.use('/applink/r', deeplinkRouter);
 app.use('/:id/conferences',conferenceRoute);
 app.use('/:id/conferences/:confId/events',eventRoute);
+app.use('/:id/conferences/:confId/abstract',abstractRoute);
 app.use('/:id/profile',profileRouter);
 
 

@@ -212,7 +212,7 @@ export async function checkTokenForLogin(req: Request, res: Response, next: Next
 }
 
 export async function isAuthenticated(req: Request, res: Response, next: NextFunction) {
-    console.log(req.body.login_refresh_token);
+    // console.log(req.body.login_refresh_token);
     if (UserService.verifyToken(req.body.login_refresh_token)) {
         return next();
     }
