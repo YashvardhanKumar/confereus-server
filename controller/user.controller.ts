@@ -3,6 +3,7 @@ import UserService from "../services/user.services";
 import { User } from "../models/User Profile Models/user.model";
 import { JwtPayload } from "jsonwebtoken";
 import { Blacklist } from "../models/blacklist.model";
+import { ProfileController } from "../services/profile.services";
 
 export async function signUp(req: Request, res: Response) {
     const { name, email, dob, } = req.body;
@@ -13,8 +14,29 @@ export async function signUp(req: Request, res: Response) {
 
     res.cookie("login_access_token", accessToken);
     res.cookie("login_refresh_token", refreshToken);
+    
     res.status(200).json({ status: true, token: accessToken, userId: success._id });
 
+}
+
+export async function getLinkedinUser(req: Request, res: Response) {
+    const { firstName, lastName, profilePicture, email } = req.body;
+  
+    // console.log(req.body);
+    const accessToken = UserService.generateToken({ email }, 15 * 60);
+    const refreshToken = UserService.generateToken({ email }, 30 * 24 * 60 * 60);
+    res.cookie("login_access_token", accessToken);
+    res.cookie("login_refresh_token", refreshToken);
+    let user = await UserService.userBuilder({ firstName, lastName, profilePicture }, email);
+    let resStatus = 200;
+    res.status(resStatus).json({ token: accessToken, userId: user });
+  }
+
+export async function changePassword(req: Request, res: Response) {
+    const { email } = req.body;
+    //@ts-ignore
+    const success = await UserService.updatePass(email, req.hashedPassword);
+    res.status(200).json({ status: true, success });
 }
 
 export async function login(req: Request, res: Response) {
@@ -29,6 +51,7 @@ export async function login(req: Request, res: Response) {
 
 export function sendMail(req: Request, res: Response) {
     // @ts-ignore
+
     const token = UserService.generateToken({ otp: req.otp }, 2 * 60);
     res.cookie("encrypted_otp_token", token, { maxAge: 2 * 60 * 1000 });
     res.status(200).json({ status: true });
@@ -77,7 +100,7 @@ export async function refreshToken(req: Request, res: Response) {
 
 export async function getAllUsers(req: Request, res: Response) {
     try {
-        const data = await User.find().populate(['workExperience', 'education', 'skills']);
+        const data = await ProfileController.fetchProfile();
 
         res.json({ status: true, data });
     } catch (error) {

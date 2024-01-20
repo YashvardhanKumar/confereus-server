@@ -97,7 +97,6 @@ function checkPassword(req, res, next) {
         try {
             let user = yield user_model_1.User.findOne({ email: req.body.email });
             /* @ts-ignore */
-            console.log(req.body.password);
             /* @ts-ignore */
             const isMatch = yield bcrypt.compare(req.body.password, req.userPass);
             if (isMatch) {
@@ -117,6 +116,7 @@ function sendOTPToMail(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         const OTP = Math.floor(Math.random() * 1000000);
         let stringOTP = OTP.toString();
+        const mailType = req.params.id;
         for (let index = 0; index < 5 - Math.log10(OTP); index++) {
             stringOTP = '0' + stringOTP;
         }
@@ -132,19 +132,17 @@ function sendOTPToMail(req, res, next) {
         const message = {
             from: `${process.env.FROM_NAME} <${process.env.FROM_EMAIL}>`,
             to: req.body.email,
-            subject: 'Verify Email Confereus',
+            subject: `${mailType == "reset" ? "Reset Password" : "Verify Email"} Confereus`,
             html: `<div>
                 <p>Hello,</p>
-                <p>Copy and paste the OTP to verify your email address.</p>
+                <p>Copy and paste the OTP to ${mailType} ${mailType == "reset" ? "your password" : "your email address"} your email address.</p>
                 <p><h3><b>${stringOTP}</b></h3></p>
-                <p>If you didn't ask to verify this address, you can ignore this email.</p>
+                <p>If you didn't ask to ${mailType} ${mailType == "reset" ? "password" : "this address"}, you can ignore this email.</p>
                 <p>Thanks,</p>
                 <p>Your Confereus team</p>
                 </div>`
         };
         const info = yield transporter.sendMail(message);
-        console.log('Message sent : %s', info.messageId);
-        console.log(stringOTP);
         const otpSalt = yield bcrypt.genSalt(10);
         const encryptedOTP = yield bcrypt.hash(stringOTP, otpSalt);
         // @ts-ignore
@@ -155,13 +153,9 @@ function sendOTPToMail(req, res, next) {
 exports.sendOTPToMail = sendOTPToMail;
 function verifyOTP(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log(req.body);
         const bcrypt_otp_token = req.body.encrypted_otp_token;
-        console.log(bcrypt_otp_token);
         let bcryptOTP = user_services_1.default.verifyToken(bcrypt_otp_token);
-        console.log(bcryptOTP);
         const success = yield bcrypt.compare(req.body.otp, bcryptOTP.otp);
-        console.log(success);
         if (success) {
             return next();
         }
@@ -174,14 +168,12 @@ exports.verifyOTP = verifyOTP;
 function isTokenNotExpired(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         let accessToken = req.headers['authorization'];
-        console.log(accessToken);
         accessToken = accessToken.slice(7, accessToken.length);
         try {
             let aData = user_services_1.default.verifyToken(accessToken, () => __awaiter(this, void 0, void 0, function* () {
                 const refreshToken = req.body.login_refresh_token;
                 let blacklist = yield blacklist_model_1.Blacklist.findOne({ refreshToken: refreshToken });
                 let data = user_services_1.default.verifyToken(refreshToken);
-                console.log(data);
                 if (blacklist || !data) {
                     res.json({ status: false, success: "Session Expired!" });
                 }
@@ -210,7 +202,6 @@ function isTokenNotExpired(req, res, next) {
             const refreshToken = req.body.login_refresh_token;
             let blacklist = yield blacklist_model_1.Blacklist.findOne({ refreshToken: refreshToken });
             let data = user_services_1.default.verifyToken(refreshToken);
-            console.log(data);
             if (blacklist || !data) {
                 res.json({ status: false, success: "Session Expired!" });
             }
@@ -230,7 +221,6 @@ exports.isTokenNotExpired = isTokenNotExpired;
 function checkAccessToken(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         let accessToken = req.headers['authorization'];
-        console.log(accessToken);
         accessToken = accessToken.slice(7, accessToken.length);
         if (user_services_1.default.verifyToken(accessToken)) {
             //@ts-ignore
@@ -246,7 +236,6 @@ exports.checkAccessToken = checkAccessToken;
 function checkTokenForLogin(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         let accessToken = req.headers['authorization'];
-        console.log(accessToken);
         accessToken = accessToken.slice(7, accessToken.length);
         let aData = user_services_1.default.verifyToken(accessToken);
         if (user_services_1.default.verifyToken(accessToken)) {
@@ -259,7 +248,6 @@ function checkTokenForLogin(req, res, next) {
             const refreshToken = req.body.login_refresh_token;
             let blacklist = yield blacklist_model_1.Blacklist.findOne({ refreshToken: refreshToken });
             let data = user_services_1.default.verifyToken(refreshToken);
-            console.log(data);
             if (blacklist || !data) {
                 res.json({ status: false, success: "Session Expired!" });
             }
@@ -275,8 +263,8 @@ function checkTokenForLogin(req, res, next) {
 exports.checkTokenForLogin = checkTokenForLogin;
 function isAuthenticated(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log(req.body.login_refresh_token);
-        if (user_services_1.default.verifyToken(req.body.login_refresh_token)) {
+        // console.log(req.body.login_refresh_token);
+        if (req.params.id == "reset" || user_services_1.default.verifyToken(req.body.login_refresh_token)) {
             return next();
         }
         res.json({ status: false, success: "Login Needed" });

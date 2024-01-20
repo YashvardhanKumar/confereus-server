@@ -1,6 +1,5 @@
 import './server/db';
-import {app,http} from './app';
-// import io from './socket';
+import {app,server,io} from './app';
 
 // dotenv.config();
 
@@ -10,5 +9,5 @@ app.get('/', (req, res) => {
     res.send('hello');
 })
 
-http
-    .listen(PORT, () => console.log(`Listening on ${PORT}`));
+server
+    .listen(PORT ,() => console.log(`Listening on ${PORT}`));

@@ -8,30 +8,16 @@ export interface IConference {
     reviewer: [Schema.Types.ObjectId],
     location: string,
     registered: [Schema.Types.ObjectId],
+    abstractId: [Schema.Types.ObjectId],
     visibility: string,
     startTime: Date,
     endTime: Date,
     eventLogo: String,
-    events: [Schema.Types.ObjectId],
-}
-export interface IEvent {
-    subject: string,
-    reviewer: Schema.Types.ObjectId,
-    presenter: [Schema.Types.ObjectId],
-    startTime: Date,
-    endTime: Date,
-    location: string
+    eventsId: [Schema.Types.ObjectId],
 }
 
-const EventSchema = new Schema<IEvent>({
-    subject: { type: String, required: true },
-    reviewer: { type: Schema.Types.ObjectId, ref: "users" },
-    presenter: [{ type: Schema.Types.ObjectId, ref: "users" }],
-    location: { type: String, required: true },
-    startTime: { type: Date, required: true },
-    endTime: { type: Date, required: true },
-});
-export const Event = model<IEvent>('events', EventSchema);
+
+
 
 const ConferenceSchema = new Schema<IConference, Model<IConference>>({
     subject: { type: String, required: true },
@@ -40,12 +26,13 @@ const ConferenceSchema = new Schema<IConference, Model<IConference>>({
     about: { type: String, required: true },
     admin: [{ type: Schema.Types.ObjectId, required: true , ref: "users"}],
     reviewer: [{ type: Schema.Types.ObjectId, ref: "users"}],
-    location: String,
+    abstractId: [{type: Schema.Types.ObjectId, ref: "abstract"}],
+    location: {type: String, required: true},
     registered: [{ type: Schema.Types.ObjectId, ref: "users" }],
     visibility: String,
     startTime: { type: Date, required: true },
     endTime: { type: Date, required: true },
-    events: [{type: Schema.Types.ObjectId, ref: "events"}]
+    eventsId: [{type: Schema.Types.ObjectId, ref: "events"}]
 
 }, { timestamps: true });
 

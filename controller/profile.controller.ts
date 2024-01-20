@@ -4,49 +4,16 @@ import { WorkExperience, WorkExperienceSchema } from "../models/User Profile Mod
 import { Education } from "../models/User Profile Models/sub_documents/education.model";
 import { Skills } from "../models/User Profile Models/sub_documents/skills.model";
 import { Types } from "mongoose";
+import { ProfileController } from "../services/profile.services";
 
 export async function fetchProfile(req: Request, res: Response) {
     const id = req.params.id;
     
-    const { ObjectId } = Types;
     try {
-        const data = await User.aggregate([
-            { $match: { _id: new ObjectId(id) } },
-            {
-                $lookup: {
-                    from: 'work_experiences',
-                    localField: 'workExperience',
-                    foreignField: '_id',
-                    as: 'workExperience',
-                    pipeline: [
-                        { $sort: { start: -1 } }
-                    ]
-                }
-            },
-            {
-                $lookup: {
-                    from: 'educations',
-                    localField: 'education',
-                    foreignField: '_id',
-                    as: 'education',
-                    pipeline: [
-                        { $sort: { start: -1 } }
-                    ]
-                }
-            },
-            {
-                $lookup: {
-                    from: 'skills',
-                    localField: 'skills',
-                    foreignField: '_id',
-                    as: 'skills',
-                }
-            },
-            { $limit: 1 },
-
-        ]);
+        let data = await ProfileController.fetchProfileOne(id);
         // .findById(id).populate(['workExperience', 'education', 'skills']);
-
+        // console.log(data);
+        
         res.json({ status: true, data: data[0] });
 
     } catch (error) {
@@ -59,8 +26,7 @@ export async function fetchProfile(req: Request, res: Response) {
 export async function editProfile(req: Request, res: Response) {
     const id = req.params.id;
     try {
-        const data = await User.findByIdAndUpdate(id, { $set: req.body.data });
-
+        let data = await ProfileController.editProfile(id,req.body.data);
         res.json({ status: true, data });
 
     } catch (error) {
@@ -73,9 +39,10 @@ export async function editProfile(req: Request, res: Response) {
 export async function addWorkSpace(req: Request, res: Response) {
     const id = req.params.id;
     try {
+        console.log(req.body);
         const data = new WorkExperience(req.body.data);
         await data.save();
-        
+        console.log(data);
         const user = await User.findByIdAndUpdate(id, { $push: { workExperience: data._id } });
 
         res.json({ status: true, data });
@@ -112,7 +79,7 @@ export async function deleteWorkSpace(req: Request, res: Response) {
 
     try {
         const user = await WorkExperience.findByIdAndDelete(wid);
-        await User.findByIdAndUpdate(id, { $pull: { workExperience: user._id } });
+        await User.findByIdAndUpdate(id, { $pull: { workExperience: wid } });
         // const data = new WorkExperience(req.body);
         // let workExperience = user.workExperience;
         // workExperience.push(data);
@@ -166,7 +133,7 @@ export async function deleteEducation(req: Request, res: Response) {
 
     try {
         const data = await Education.findByIdAndDelete(eid);
-        await User.findByIdAndUpdate(id, { $pull: { education: data._id } })
+        await User.findByIdAndUpdate(id, { $pull: { education: eid } })
         // const data = new WorkExperience(req.body);
         // let workExperience = user.workExperience;
         // workExperience.push(data);
@@ -223,7 +190,7 @@ export async function deleteSkills(req: Request, res: Response) {
 
     try {
         const data = await Skills.findByIdAndDelete(sid);
-        await User.findByIdAndUpdate(id, { $pull: { skills: data._id } })
+        await User.findByIdAndUpdate(id, { $pull: { skills: sid } })
         // const data = new WorkExperience(req.body);
         // let workExperience = user.workExperience;
         // workExperience.push(data);

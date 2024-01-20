@@ -19,7 +19,7 @@ const AbstractSchema = new Schema<IAbstract, Model<IAbstract>>({
     paperName: {type: String, required: true},
     abstract: {type: String, required: true},
     paperLink: {type: String, required: true},
-    approved: Date,
+    approved: {type: Date   },
     isApproved: {type: Boolean, required: true,default: false},
     createdAt: {type: Date, default: Date.now()},
 })

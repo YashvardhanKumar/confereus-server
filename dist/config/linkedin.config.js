@@ -34,7 +34,6 @@ function getLinkedinUser(req, res) {
         // if(!(accessToken === null || userProfile === null || userEmail === null)) {
         let user = yield userBuilder({ firstName, lastName, profilePicture }, email);
         let resStatus = 200;
-        console.log(user._id);
         // }
         res.status(resStatus).json({ token: accessToken, userId: user });
     });

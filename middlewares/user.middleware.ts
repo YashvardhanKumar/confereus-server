@@ -68,6 +68,7 @@ export async function checkPassword(req: Request, res: Response, next: NextFunct
 export async function sendOTPToMail(req: Request, res: Response, next: NextFunction) {
     const OTP = Math.floor(Math.random() * 1000000);
     let stringOTP: string = OTP.toString();
+    const mailType = req.params.id;
 
     for (let index = 0; index < 5 - Math.log10(OTP); index++) {
         stringOTP = '0' + stringOTP;
@@ -85,12 +86,12 @@ export async function sendOTPToMail(req: Request, res: Response, next: NextFunct
     const message = {
         from: `${process.env.FROM_NAME} <${process.env.FROM_EMAIL}>`,
         to: req.body.email,
-        subject: 'Verify Email Confereus',
+        subject: `${mailType == "reset" ? "Reset Password" : "Verify Email"} Confereus`,
         html: `<div>
                 <p>Hello,</p>
-                <p>Copy and paste the OTP to verify your email address.</p>
+                <p>Copy and paste the OTP to ${mailType} ${mailType == "reset" ? "your password" : "your email address"} your email address.</p>
                 <p><h3><b>${stringOTP}</b></h3></p>
-                <p>If you didn't ask to verify this address, you can ignore this email.</p>
+                <p>If you didn't ask to ${mailType} ${mailType == "reset" ? "password" : "this address"}, you can ignore this email.</p>
                 <p>Thanks,</p>
                 <p>Your Confereus team</p>
                 </div>`
@@ -121,36 +122,13 @@ export async function isTokenNotExpired(req: Request, res: Response, next: NextF
 
     try {
 
-        let aData = UserService.verifyToken(accessToken, async () => {
-            const refreshToken = req.body.login_refresh_token;
-            let blacklist = await Blacklist.findOne({ refreshToken: refreshToken });
-            let data = UserService.verifyToken(refreshToken) as JwtPayload;
-
-            if (blacklist || !data) {
-                res.json({ status: false, success: "Session Expired!" })
-            }
-            else {
-                //@ts-ignore
-                req.data = data.email;
-                accessToken = UserService.generateToken({ email: data.email }, 15 * 60);
-                res.cookie(`login_access_token`, accessToken);
-                next();
-                // res.json({ status: true, token: accessToken });
-                // res.json({ status: false, success: "Session Expired!" })
-
-            }
-        });
+        let aData = UserService.verifyToken(accessToken);
         if (aData) {
             //@ts-ignore
             req.data = aData.email;
             next();
         }
     } catch (e) {
-        // if (aData) {
-        //     //@ts-ignore
-        //     req.data = aData.email;
-        //     next();
-        // } else {
         const refreshToken = req.body.login_refresh_token;
         let blacklist = await Blacklist.findOne({ refreshToken: refreshToken });
         let data = UserService.verifyToken(refreshToken) as JwtPayload;
@@ -162,10 +140,11 @@ export async function isTokenNotExpired(req: Request, res: Response, next: NextF
             //@ts-ignore
             req.data = data.email;
             accessToken = UserService.generateToken({ email: data.email }, 15 * 60);
-            res.cookie(`login_access_token`, accessToken);
+            res.cookie("login_access_token", accessToken);
             next();
             // res.json({ status: true, token: accessToken });
             // res.json({ status: false, success: "Session Expired!" })
+
 
         }
     }
@@ -213,7 +192,8 @@ export async function checkTokenForLogin(req: Request, res: Response, next: Next
 
 export async function isAuthenticated(req: Request, res: Response, next: NextFunction) {
     // console.log(req.body.login_refresh_token);
-    if (UserService.verifyToken(req.body.login_refresh_token)) {
+
+    if (req.params.id == "reset" || UserService.verifyToken(req.body.login_refresh_token)) {
         return next();
     }
     res.json({ status: false, success: "Login Needed" });

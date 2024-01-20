@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { getLinkedinUser } from "../../../../config/linkedin.config";
 import catchAsync from "../../../../services/catchAsync";
+import { getLinkedinUser } from "../../../../controller/user.controller";
 
 const deeplinkRouter = Router({ mergeParams : true });
 

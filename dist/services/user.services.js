@@ -52,6 +52,17 @@ class UserService {
             }
         });
     }
+    static updatePass(email, password) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const userId = yield user_model_1.User.findOneAndUpdate({ email }, { $set: { password } });
+                return userId;
+            }
+            catch (error) {
+                return "Something Went Wrong!";
+            }
+        });
+    }
     static signUpWithFacebook(name, dob, email, password) {
         return __awaiter(this, void 0, void 0, function* () {
             try {

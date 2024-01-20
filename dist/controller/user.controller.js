@@ -12,10 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAllUsers = exports.refreshToken = exports.logout = exports.verifiedEmail = exports.sendMail = exports.login = exports.signUp = void 0;
+exports.getAllUsers = exports.refreshToken = exports.logout = exports.verifiedEmail = exports.sendMail = exports.login = exports.changePassword = exports.signUp = void 0;
 const user_services_1 = __importDefault(require("../services/user.services"));
 const user_model_1 = require("../models/User Profile Models/user.model");
 const blacklist_model_1 = require("../models/blacklist.model");
+const profile_services_1 = require("../services/profile.services");
 function signUp(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { name, email, dob, } = req.body;
@@ -29,6 +30,15 @@ function signUp(req, res) {
     });
 }
 exports.signUp = signUp;
+function changePassword(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { email } = req.body;
+        //@ts-ignore
+        const success = yield user_services_1.default.updatePass(email, req.hashedPassword);
+        res.status(200).json({ status: true, success });
+    });
+}
+exports.changePassword = changePassword;
 function login(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { email, password } = req.body;
@@ -54,7 +64,6 @@ function verifiedEmail(req, res) {
             let accessToken = req.headers['authorization'];
             accessToken = accessToken.slice(7, accessToken.length);
             const data = user_services_1.default.verifyToken(accessToken);
-            console.log(data);
             if (!data) {
                 return res.json({ status: false, success: "Session Expired" });
             }
@@ -63,7 +72,6 @@ function verifiedEmail(req, res) {
                     emailVerified: true,
                 }
             });
-            console.log(user);
             res.status(200).json({ status: true, user });
         }
         catch (error) {
@@ -100,8 +108,7 @@ exports.refreshToken = refreshToken;
 function getAllUsers(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const data = yield user_model_1.User.find().populate(['workExperience', 'education', 'skills']);
-            console.log(data);
+            const data = yield profile_services_1.ProfileController.fetchProfile();
             res.json({ status: true, data });
         }
         catch (error) {

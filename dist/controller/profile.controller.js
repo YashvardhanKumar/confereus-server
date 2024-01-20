@@ -14,47 +14,12 @@ const user_model_1 = require("../models/User Profile Models/user.model");
 const work_experience_model_1 = require("../models/User Profile Models/sub_documents/work_experience.model");
 const education_model_1 = require("../models/User Profile Models/sub_documents/education.model");
 const skills_model_1 = require("../models/User Profile Models/sub_documents/skills.model");
-const mongoose_1 = require("mongoose");
+const profile_services_1 = require("../services/profile.services");
 function fetchProfile(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const id = req.params.id;
-        console.log(id);
-        const { ObjectId } = mongoose_1.Types;
         try {
-            const data = yield user_model_1.User.aggregate([
-                { $match: { _id: new ObjectId(id) } },
-                {
-                    $lookup: {
-                        from: 'work_experiences',
-                        localField: 'workExperience',
-                        foreignField: '_id',
-                        as: 'workExperience',
-                        pipeline: [
-                            { $sort: { start: -1 } }
-                        ]
-                    }
-                },
-                {
-                    $lookup: {
-                        from: 'educations',
-                        localField: 'education',
-                        foreignField: '_id',
-                        as: 'education',
-                        pipeline: [
-                            { $sort: { start: -1 } }
-                        ]
-                    }
-                },
-                {
-                    $lookup: {
-                        from: 'skills',
-                        localField: 'skills',
-                        foreignField: '_id',
-                        as: 'skills',
-                    }
-                },
-                { $limit: 1 },
-            ]);
+            let data = yield profile_services_1.ProfileController.fetchProfileOne(id);
             // .findById(id).populate(['workExperience', 'education', 'skills']);
             console.log(data);
             res.json({ status: true, data: data[0] });
@@ -70,8 +35,7 @@ function editProfile(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const id = req.params.id;
         try {
-            const data = yield user_model_1.User.findByIdAndUpdate(id, { $set: req.body.data });
-            console.log(data);
+            let data = yield profile_services_1.ProfileController.editProfile(id, req.body.data);
             res.json({ status: true, data });
         }
         catch (error) {
@@ -87,7 +51,6 @@ function addWorkSpace(req, res) {
         try {
             const data = new work_experience_model_1.WorkExperience(req.body.data);
             yield data.save();
-            console.log(data);
             const user = yield user_model_1.User.findByIdAndUpdate(id, { $push: { workExperience: data._id } });
             res.json({ status: true, data });
         }
@@ -107,7 +70,6 @@ function editWorkSpace(req, res) {
             // const data = new WorkExperience(req.body);
             // let workExperience = user.workExperience;
             // workExperience.push(data);
-            console.log(data);
             res.json({ status: true, data });
         }
         catch (error) {
@@ -123,7 +85,7 @@ function deleteWorkSpace(req, res) {
         const wid = req.params.wid;
         try {
             const user = yield work_experience_model_1.WorkExperience.findByIdAndDelete(wid);
-            yield user_model_1.User.findByIdAndUpdate(id, { $pull: { workExperience: user._id } });
+            yield user_model_1.User.findByIdAndUpdate(id, { $pull: { workExperience: wid } });
             // const data = new WorkExperience(req.body);
             // let workExperience = user.workExperience;
             // workExperience.push(data);
@@ -178,7 +140,7 @@ function deleteEducation(req, res) {
         const eid = req.params.eid;
         try {
             const data = yield education_model_1.Education.findByIdAndDelete(eid);
-            yield user_model_1.User.findByIdAndUpdate(id, { $pull: { education: data._id } });
+            yield user_model_1.User.findByIdAndUpdate(id, { $pull: { education: eid } });
             // const data = new WorkExperience(req.body);
             // let workExperience = user.workExperience;
             // workExperience.push(data);
@@ -217,7 +179,6 @@ function editSkill(req, res) {
             // const data = new WorkExperience(req.body);
             // let workExperience = user.workExperience;
             // workExperience.push(data);
-            console.log(data);
             res.json({ status: true, data });
         }
         catch (error) {
@@ -233,7 +194,7 @@ function deleteSkills(req, res) {
         const sid = req.params.sid;
         try {
             const data = yield skills_model_1.Skills.findByIdAndDelete(sid);
-            yield user_model_1.User.findByIdAndUpdate(id, { $pull: { skills: data._id } });
+            yield user_model_1.User.findByIdAndUpdate(id, { $pull: { skills: sid } });
             // const data = new WorkExperience(req.body);
             // let workExperience = user.workExperience;
             // workExperience.push(data);

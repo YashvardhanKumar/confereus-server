@@ -8,31 +8,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.fetchRegisteredConferences = exports.registerConference = exports.deleteConference = exports.editConference = exports.addConference = exports.fetchConferences = void 0;
+exports.fetchRegisteredConferences = exports.customizeRoles = exports.registerConference = exports.deleteConference = exports.editConference = exports.addConference = exports.fetchConferences = void 0;
 const conference_model_1 = require("../models/conference.model");
-const mongoose_1 = require("mongoose");
+const conference_services_1 = __importDefault(require("../services/conference.services"));
+const app_1 = require("../app");
 function fetchConferences(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         let type = req.query.type;
-        if (!type)
-            type = "public";
         try {
-            // let data = await Conference.find((type == 'all') ? {} : { visibility: type }).sort({startTime: 1}).populate('events');
-            let data = yield conference_model_1.Conference.aggregate([
-                {
-                    $lookup: {
-                        from: 'events',
-                        localField: 'events',
-                        foreignField: '_id',
-                        as: 'events',
-                        pipeline: [
-                            { $sort: { startTime: 1 } }
-                        ]
-                    }
-                },
-            ]);
-            // console.log(data);
+            let data = yield conference_services_1.default.fetchConferences(type);
             res.json({ status: true, data });
         }
         catch (error) {
@@ -44,17 +32,12 @@ function fetchConferences(req, res) {
 exports.fetchConferences = fetchConferences;
 function addConference(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { subject, about, startTime, endTime } = req.body.data;
+        const { subject, about, admin, startTime, endTime } = req.body.data;
         const id = req.params.id;
-        // let user = await User.findById(id);
-        // const _id = new Types.ObjectId(id);
-        // console.log(req.params);
         try {
-            let data = new conference_model_1.Conference({ subject, about, startTime, endTime, admin: id });
-            yield data.save();
-            // let userList = await User.find();
-            // console.log(data);
-            data = yield data.populate('events');
+            let data = yield conference_services_1.default.addConferences(subject, about, startTime, endTime, admin, id);
+            app_1.io.emit("conferences", yield conference_services_1.default.fetchConferences(null));
+            app_1.io.emit("added-conferences", data);
             res.json({ status: true, data });
         }
         catch (error) {
@@ -67,12 +50,10 @@ exports.addConference = addConference;
 function editConference(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const conferenceId = req.params.confId;
-        console.log(req.body.data);
         try {
-            let data = yield conference_model_1.Conference.findByIdAndUpdate(conferenceId, {
-                $set: req.body.data,
-            });
-            data = yield data.populate('events');
+            let data = yield conference_services_1.default.editConferences(conferenceId, req.body);
+            app_1.io.emit("conferences", yield conference_services_1.default.fetchConferences(null));
+            app_1.io.emit("edited-conferences", yield conference_services_1.default.fetchConferencesOne(null, conferenceId));
             res.json({ status: true, data });
         }
         catch (error) {
@@ -87,9 +68,9 @@ function deleteConference(req, res) {
         const conferenceId = req.params.confId;
         let type = req.query.type;
         try {
-            let data = yield conference_model_1.Conference.findById(conferenceId);
-            yield conference_model_1.Event.deleteMany({ _id: { $in: data.events } });
-            yield conference_model_1.Conference.findByIdAndDelete(conferenceId);
+            let data = yield conference_services_1.default.deleteConference(conferenceId);
+            app_1.io.emit("conferences", yield conference_services_1.default.fetchConferences(null));
+            app_1.io.emit("deleted-conferences", data);
         }
         catch (error) {
             console.log(error);
@@ -105,6 +86,8 @@ function registerConference(req, res) {
         const userId = req.params.id;
         try {
             let data = yield conference_model_1.Conference.findByIdAndUpdate(conferenceId, { $push: { registered: userId } });
+            app_1.io.emit("conferences", yield conference_services_1.default.fetchConferences(null));
+            app_1.io.emit("edited-conferences", data);
         }
         catch (error) {
             console.log(error);
@@ -114,12 +97,29 @@ function registerConference(req, res) {
     });
 }
 exports.registerConference = registerConference;
+function customizeRoles(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const conferenceId = req.params.confId;
+        const userId = req.params.id;
+        const { reviewer, admin } = req.body.data;
+        try {
+            let data = yield conference_model_1.Conference.findByIdAndUpdate(conferenceId, { $set: { reviewer, admin } });
+            app_1.io.emit("conferences", yield conference_services_1.default.fetchConferences(null));
+            app_1.io.emit("edited-conferences", data);
+        }
+        catch (error) {
+            console.log(error);
+            res.json({ status: false, message: "Something went wrong" });
+        }
+        res.json({ status: true });
+    });
+}
+exports.customizeRoles = customizeRoles;
 function fetchRegisteredConferences(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const userId = req.params.id;
-        console.log(userId + 'yash');
         try {
-            let data = yield conference_model_1.Conference.find({ registered: new mongoose_1.Types.ObjectId(userId) }).sort({ startTime: 1 }).populate('events');
+            let data = yield conference_services_1.default.fetchRegisteredConferences(null, userId);
             console.log(data);
             res.json({ status: true, data });
         }

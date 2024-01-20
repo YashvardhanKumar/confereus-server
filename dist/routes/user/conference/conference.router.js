@@ -16,6 +16,7 @@ conferenceRoute.get('/', user_middleware_1.isAuthenticated, user_middleware_1.is
     .patch('/edit/:confId', user_middleware_1.isAuthenticated, user_middleware_1.isTokenNotExpired, (0, catchAsync_1.default)(conference_controller_1.editConference))
     .delete('/delete/:confId', user_middleware_1.isAuthenticated, user_middleware_1.isTokenNotExpired, (0, catchAsync_1.default)(conference_controller_1.deleteConference));
 conferenceRoute.get('/registered', user_middleware_1.isAuthenticated, user_middleware_1.isTokenNotExpired, (0, catchAsync_1.default)(conference_controller_1.fetchRegisteredConferences))
-    .post('/:confId/register', user_middleware_1.isAuthenticated, user_middleware_1.isTokenNotExpired, (0, catchAsync_1.default)(conference_controller_1.registerConference));
+    .post('/:confId/register', user_middleware_1.isAuthenticated, user_middleware_1.isTokenNotExpired, (0, catchAsync_1.default)(conference_controller_1.registerConference))
+    .patch('/:confId/roleschange', user_middleware_1.isAuthenticated, user_middleware_1.isTokenNotExpired, (0, catchAsync_1.default)(conference_controller_1.customizeRoles));
 exports.default = conferenceRoute;
 //# sourceMappingURL=conference.router.js.map
