@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "npm install && tsc",
-    "start": "tsc && babel-node ./dist/index.js",
+    "start": "ts-node ./index.ts",
     "dev": "tsc && nodemon --exec babel-node ./dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "serve": "nodemon index"
