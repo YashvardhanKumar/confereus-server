@@ -12,12 +12,12 @@ export async function fetchProfile(req: Request, res: Response) {
     try {
         let data = await ProfileController.fetchProfileOne(id);
         // .findById(id).populate(['workExperience', 'education', 'skills']);
-        // console.log(data);
+        // // console.log(data);
         
         res.json({ status: true, data: data[0] });
 
     } catch (error) {
-        console.log(error);
+        // // console.log(error);
         res.json({ status: false, message: "Something went wrong" });
     }
 
@@ -30,7 +30,7 @@ export async function editProfile(req: Request, res: Response) {
         res.json({ status: true, data });
 
     } catch (error) {
-        console.log(error);
+        // // console.log(error);
         res.json({ status: false, message: "Something went wrong" });
     }
 
@@ -39,16 +39,16 @@ export async function editProfile(req: Request, res: Response) {
 export async function addWorkSpace(req: Request, res: Response) {
     const id = req.params.id;
     try {
-        console.log(req.body);
+        // // console.log(req.body);
         const data = new WorkExperience(req.body.data);
         await data.save();
-        console.log(data);
+        // // console.log(data);
         const user = await User.findByIdAndUpdate(id, { $push: { workExperience: data._id } });
 
         res.json({ status: true, data });
 
     } catch (error) {
-        console.log(error);
+        // // console.log(error);
         res.json({ status: false, message: "Something went wrong" });
     }
 
@@ -67,7 +67,7 @@ export async function editWorkSpace(req: Request, res: Response) {
         res.json({ status: true, data });
 
     } catch (error) {
-        console.log(error);
+        // // console.log(error);
         res.json({ status: false, message: "Something went wrong" });
     }
 
@@ -86,7 +86,7 @@ export async function deleteWorkSpace(req: Request, res: Response) {
         res.json({ status: true });
 
     } catch (error) {
-        console.log(error);
+        // console.log(error);
         res.json({ status: false, message: "Something went wrong" });
     }
 
@@ -101,7 +101,7 @@ export async function addEducation(req: Request, res: Response) {
         res.json({ status: true, data });
 
     } catch (error) {
-        console.log(error);
+        // console.log(error);
         res.json({ status: false, message: "Something went wrong" });
     }
 
@@ -121,7 +121,7 @@ export async function editEducation(req: Request, res: Response) {
         res.json({ status: true, data });
 
     } catch (error) {
-        console.log(error);
+        // console.log(error);
         res.json({ status: false, message: "Something went wrong" });
     }
 
@@ -140,7 +140,7 @@ export async function deleteEducation(req: Request, res: Response) {
         res.json({ status: true });
 
     } catch (error) {
-        console.log(error);
+        // console.log(error);
         res.json({ status: false, message: "Something went wrong" });
     }
 
@@ -157,7 +157,7 @@ export async function addSkill(req: Request, res: Response) {
         res.json({ status: true, data });
 
     } catch (error) {
-        console.log(error);
+        // console.log(error);
         res.json({ status: false, message: "Something went wrong" });
     }
 
@@ -178,7 +178,7 @@ export async function editSkill(req: Request, res: Response) {
         res.json({ status: true, data });
 
     } catch (error) {
-        console.log(error);
+        // console.log(error);
         res.json({ status: false, message: "Something went wrong" });
     }
 
@@ -197,7 +197,7 @@ export async function deleteSkills(req: Request, res: Response) {
         res.json({ status: true });
 
     } catch (error) {
-        console.log(error);
+        // console.log(error);
         res.json({ status: false, message: "Something went wrong" });
     }
 

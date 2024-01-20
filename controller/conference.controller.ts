@@ -11,11 +11,11 @@ export async function fetchConferences(req: Request, res: Response) {
     
     try {
         let data = await ConferenceServices.fetchConferences(type);
-        // console.log(data);
+        // // console.log(data);
         res.json({ status: true, data });
 
     } catch (error) {
-        console.log(error);
+        // // console.log(error);
         res.json({ status: false, message: "Something went wrong" });
     }
 }
@@ -28,7 +28,7 @@ export async function fetchConferencesOne(req: Request<{ confId: string }>, res:
         res.json({ status: true, data });
 
     } catch (error) {
-        console.log(error);
+        // // console.log(error);
         res.json({ status: false, message: "Something went wrong" });
     }
 }
@@ -43,7 +43,7 @@ export async function addConference(req: Request<{ id: string }>, res: Response)
         io.emit("conferences-add",data)
         res.json({ status: true, data });
     } catch (error) {
-        console.log(error);
+        // // console.log(error);
         res.json({ status: false, message: "Something went wrong" });
     }
 }
@@ -58,7 +58,7 @@ export async function editConference(req: Request<{ id: string, confId: string }
         res.json({ status: true, data });
 
     } catch (error) {
-        console.log(error);
+        // // console.log(error);
         res.json({ status: false, message: "Something went wrong" });
     }
 }
@@ -71,7 +71,7 @@ export async function deleteConference(req: Request<{ id: string, confId: string
         io.emit("conferences",await ConferenceServices.fetchConferences(null))
         io.emit("conferences-delete",data)
     } catch (error) {
-        console.log(error);
+        // // console.log(error);
         res.json({ status: false, message: "Something went wrong" });
     }
     res.json({ status: true });
@@ -85,7 +85,7 @@ export async function registerConference(req: Request<{ id: string, confId: stri
         io.emit("conferences",await ConferenceServices.fetchConferences(null))
         io.emit("conferences-edit",data)
     } catch (error) {
-        console.log(error);
+        // // console.log(error);
         res.json({ status: false, message: "Something went wrong" });
     }
     res.json({ status: true });
@@ -99,7 +99,7 @@ export async function customizeRoles(req: Request<{ id: string, confId: string }
         io.emit("conferences",await ConferenceServices.fetchConferences(null))
         io.emit("conferences-edit",data)
     } catch (error) {
-        console.log(error);
+        // // console.log(error);
         res.json({ status: false, message: "Something went wrong" });
     }
     res.json({ status: true });
@@ -110,11 +110,11 @@ export async function fetchRegisteredConferences(req: Request<{ id: string }>, r
     
     try {
         let data = await ConferenceServices.fetchRegisteredConferences(null,userId)
-        // console.log(data);
+        // // console.log(data);
         res.json({ status: true, data });
 
     } catch (error) {
-        console.log(error);
+        // // console.log(error);
         res.json({ status: false, message: "Something went wrong" });
     }
 }

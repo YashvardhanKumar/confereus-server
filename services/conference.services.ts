@@ -89,15 +89,15 @@ class ConferenceServices {
                 }
             },
         ]);
-        // console.log("data");
-        // console.log(data);
+        // // console.log("data");
+        // // console.log(data);
 
         return data;
     }
     static async fetchConferencesOne(type: any, confId: string) {
         if (!type)
             type = "public";
-        // console.log(confId);
+        // // console.log(confId);
 
         // let data = await Conference.find((type == 'all') ? {} : { visibility: type }).sort({startTime: 1}).populate('events');
         let data = await Conference.aggregate([

@@ -10,16 +10,16 @@ export default class ConferenceSocket {
     constructor(socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>) {
         this.socket = socket
         Conference.watch().on("change", (message) => {
-            console.log(message);
+            // console.log(message);
             ConferenceServices.fetchConferences('all').then((result) => {
                 socket.emit("conferences", result);
             }).catch((err) => {
-                console.log(err);
+                // console.log(err);
             });
             ConferenceServices.fetchConferencesOne('all', message.documentKey._id).then((result) => {
                 socket.emit("conferences-one", result);
             }).catch((err) => {
-                console.log(err);
+                // console.log(err);
             });
         })
         this.fetchConferences();
@@ -30,22 +30,22 @@ export default class ConferenceSocket {
     fetchConferences(): void {
         let socket = this.socket;
         socket.on('conferences', (...args) => {
-            console.log(args);
+            // console.log(args);
             
             let { confId } = args[2];
             if (!confId) {
                 ConferenceServices.fetchConferences('all').then((result) => {
                     socket.emit("conferences", result);
                 }).catch((err) => {
-                    console.log(err);
+                    // console.log(err);
                 });
             } else {
-                console.log(args);
+                // console.log(args);
                 ConferenceServices.fetchConferencesOne('all', confId).then((result) => {
-                    console.log(result);
+                    // console.log(result);
                     socket.emit("conferences-one", result);
                 }).catch((err) => {
-                    console.log(err);
+                    // console.log(err);
                 });
             }
         })
@@ -57,9 +57,9 @@ export default class ConferenceSocket {
             let { subject, about, startTime, endTime, admin, creator, location } = args[2];
             ConferenceServices.addConferences(subject, about, startTime, endTime, admin, creator, location)
             .then((data) => {
-                console.log(data);
+                // console.log(data);
             }).catch((err) => {
-                console.log(err);
+                // console.log(err);
             });
         })
     }
@@ -70,9 +70,9 @@ export default class ConferenceSocket {
             let { confId } = args[2];
             ConferenceServices.editConferences(confId,args[2])
             .then((data) => {
-                console.log(data);
+                // console.log(data);
             }).catch((err) => {
-                console.log(err);
+                // console.log(err);
             });
         })
     }
@@ -83,9 +83,9 @@ export default class ConferenceSocket {
             let { confId } = args[2];
             ConferenceServices.deleteConference(confId)
             .then((data) => {
-                console.log(data);
+                // console.log(data);
             }).catch((err) => {
-                console.log(err);
+                // console.log(err);
             });
         })
     }
@@ -96,9 +96,9 @@ export default class ConferenceSocket {
             let { confId,userId } = args[2];
             ConferenceServices.registerConferences(confId,userId)
             .then((data) => {
-                console.log(data);
+                // console.log(data);
             }).catch((err) => {
-                console.log(err);
+                // console.log(err);
             });
         })
     }

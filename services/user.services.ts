@@ -75,7 +75,7 @@ class UserService {
         try {
             return jwt.sign(payload, privateKey, { expiresIn: jwt_expire, algorithm: 'RS256' });
         } catch (err) {
-            console.log(err);
+            // console.log(err);
             return null;
         }
     }
@@ -88,7 +88,7 @@ class UserService {
         try {
             return jwt.verify(token, publicKey, { algorithms: ['RS256'] });
         } catch (err) {
-            console.log(err);
+            // console.log(err);
             onError();
             return err;
         }

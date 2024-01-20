@@ -22,7 +22,7 @@ export async function signUp(req: Request, res: Response) {
 export async function getLinkedinUser(req: Request, res: Response) {
     const { firstName, lastName, profilePicture, email } = req.body;
   
-    // console.log(req.body);
+    // // console.log(req.body);
     const accessToken = UserService.generateToken({ email }, 15 * 60);
     const refreshToken = UserService.generateToken({ email }, 30 * 24 * 60 * 60);
     res.cookie("login_access_token", accessToken);
@@ -73,7 +73,7 @@ export async function verifiedEmail(req: Request, res: Response) {
         });
         res.status(200).json({ status: true, user });
     } catch (error) {
-        console.log(error.message);
+        // console.log(error.message);
         throw error;
     }
 }
@@ -104,7 +104,7 @@ export async function getAllUsers(req: Request, res: Response) {
 
         res.json({ status: true, data });
     } catch (error) {
-        console.log(error);
+        // console.log(error);
         res.json({ status: false, message: error });
     }
 

@@ -5,14 +5,14 @@ import { AbstractServices } from "../services/abstract.services";
 export async function fetchAbstract(req: Request<{ id: string, confId: string, eventId: string }>, res: Response) {
     // let type = req.query.type;
     let { confId, eventId } = req.params;
-    // console.log(req.params.confId);
+    // // console.log(req.params.confId);
     try {
         let data = await AbstractServices.fetchAbstract(confId, eventId)
-        // console.log(data);
+        // // console.log(data);
         res.json({ status: true, data });
 
     } catch (error) {
-        console.log(error);
+        // // console.log(error);
         res.json({ status: false, message: "Something went wrong" });
     }
 }
@@ -33,7 +33,7 @@ export async function addAbstract(req: Request<{ id: string, confId: string }>, 
 
         res.json({ status: true, data });
     } catch (error) {
-        console.log(error);
+        // // console.log(error);
         res.json({ status: false, message: "Something went wrong" });
     }
 }
@@ -48,7 +48,7 @@ export async function editAbstract(req: Request<{ id: string, confId: string, ab
         res.json({ status: true, data });
 
     } catch (error) {
-        console.log(error);
+        // // console.log(error);
         res.json({ status: false, message: "Something went wrong" });
     }
 }
@@ -61,7 +61,7 @@ export async function deleteAbstract(req: Request<{ id: string, absId: string }>
         io.emit("abstracts", await AbstractServices.fetchAbstract(req.body.confId, null));
         io.emit("abstracts-delete",data)
     } catch (error) {
-        console.log(error);
+        // // console.log(error);
         res.json({ status: false, message: "Something went wrong" });
     }
     res.json({ status: true });
@@ -75,7 +75,7 @@ export async function approveAbstract(req: Request<{ id: string, absId: string }
         res.json({ status: true, data });
 
     } catch (error) {
-        console.log(error);
+        // // console.log(error);
         res.json({ status: false, message: "Something went wrong" });
     }
 }

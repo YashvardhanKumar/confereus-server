@@ -189,7 +189,7 @@ export class AbstractServices {
         let ttl = (await Event.findById(eventId)).endTime
         
         let data = new Abstract({ conferenceId: confId, eventId, userId, paperLink, abstract, paperName, endAt: ttl });
-        // Abstract.watch().on('change', data => console.log(data));
+        // Abstract.watch().on('change', data => // console.log(data));
         await data.save();
         return data;
     }

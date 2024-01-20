@@ -10,25 +10,25 @@ export default class EventSocket {
     constructor(socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>) {
         this.socket = socket;
         Event.watch().on("change", (message) => {
-            console.log(message);
+            // console.log(message);
             const {_id,conferenceId} = message.documentKey;
             EventServices.fetchEventsOne(_id).then((result) => {
                 socket.emit("events-one", result);
             }).catch((err) => {
-                console.log(err);
+                // console.log(err);
             });
             if (conferenceId) {
                 EventServices.fetchEvents(conferenceId).then((result) => {
                     socket.emit("events", result);
                 }).catch((err) => {
-                    console.log(err);
+                    // console.log(err);
                 });
             } else {
                 Event.findById(message.documentKey._id).then((value) => {
                     EventServices.fetchEvents(value.conferenceId.toString()).then((result) => {
                         socket.emit("events", result);
                     }).catch((err) => {
-                        console.log(err);
+                        // console.log(err);
                     });
                 })
             }
@@ -46,13 +46,13 @@ export default class EventSocket {
                 EventServices.fetchEvents(confId).then((result) => {
                     socket.emit("events", result);
                 }).catch((err) => {
-                    console.log(err);
+                    // console.log(err);
                 });
             } else {
                 EventServices.fetchEventsOne(eventId).then((result) => {
                     socket.emit("events-one", result);
                 }).catch((err) => {
-                    console.log(err);
+                    // console.log(err);
                 });
             }
         })
@@ -64,9 +64,9 @@ export default class EventSocket {
             let { subject, presenter, startTime, endTime, location,confId } = args[2];
             EventServices.addEvents(subject, presenter, startTime, endTime, location,confId)
             .then((data) => {
-                console.log(data);
+                // console.log(data);
             }).catch((err) => {
-                console.log(err);
+                // console.log(err);
             });
         })
     }
@@ -77,9 +77,9 @@ export default class EventSocket {
             let { eventId } = args[2];
             EventServices.editEvents(args[2],eventId)
             .then((data) => {
-                console.log(data);
+                // console.log(data);
             }).catch((err) => {
-                console.log(err);
+                // console.log(err);
             });
         })
     }
@@ -90,9 +90,9 @@ export default class EventSocket {
             let { eventId,confId } = args[2];
             EventServices.deleteEvents(eventId,confId)
             .then((data) => {
-                console.log(data);
+                // console.log(data);
             }).catch((err) => {
-                console.log(err);
+                // console.log(err);
             });
         })
     }

@@ -10,7 +10,7 @@ export async function getEvent(req: Request, res: Response) {
         let data = await EventServices.fetchEvents(confId);
         res.json({ status: true, data });
     } catch (error) {
-        console.log(error);
+        // // console.log(error);
         res.json({ status: false, message: "Something went wrong" });
     }
 } export async function addEvent(req: Request<{ id: string, confId: string }>, res: Response) {
@@ -23,7 +23,7 @@ export async function getEvent(req: Request, res: Response) {
         io.emit("events-add",data)
         res.json({ status: true, data });
     } catch (error) {
-        console.log(error);
+        // // console.log(error);
         res.json({ status: false, message: "Something went wrong" });
     }
 }
@@ -38,7 +38,7 @@ export async function editEvent(req: Request<{ id: string, confId: string, event
         res.json({ status: true, data });
 
     } catch (error) {
-        console.log(error);
+        // // console.log(error);
         res.json({ status: false, message: "Something went wrong" });
     }
 }
@@ -51,7 +51,7 @@ export async function deleteEvent(req: Request<{ id: string, confId: string, eve
         io.emit("events",await EventServices.fetchEvents(req.params.confId))
         io.emit("events-delete",data);
     } catch (error) {
-        console.log(error);
+        // // console.log(error);
         res.json({ status: false, message: "Something went wrong" });
     }
     res.json({ status: true });

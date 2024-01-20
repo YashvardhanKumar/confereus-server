@@ -9,17 +9,17 @@ export default class UserSocket {
     constructor(socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>) {
         this.socket = socket;
         User.watch().on("change", (message) => {
-            console.log(message);
+            // console.log(message);
             const { _id } = message.documentKey._id;
             ProfileController.fetchProfileOne(_id).then((result) => {
                 socket.emit("users-one", result[0]);
             }).catch((err) => {
-                console.log(err);
+                // console.log(err);
             });
             ProfileController.fetchProfile().then((result) => {
                 socket.emit("users", result);
             }).catch((err) => {
-                console.log(err);
+                // console.log(err);
             });
         });
         this.fetchUsers();
@@ -32,14 +32,14 @@ export default class UserSocket {
                 ProfileController.fetchProfile().then((result) => {
                     socket.emit("users", result);
                 }).catch((err) => {
-                    console.log(err);
+                    // console.log(err);
                 });
             } else {
                 ProfileController.fetchProfileOne(userId).then((result) => {
-                    console.log(result);
+                    // console.log(result);
                     socket.emit("users-one", result[0]);
                 }).catch((err) => {
-                    console.log(err);
+                    // console.log(err);
                 });
             }
         })

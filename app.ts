@@ -41,10 +41,10 @@ const io = new Server(server, {
 })
 
 io.on('connection', (socket) => {
-  console.log(`Connected to ${socket.id}`);
+  // // console.log(`Connected to ${socket.id}`);
   // io.emit('message', "data");
   socket.on('message', (message) => {
-    console.log(`message from ${socket.id} : ${message}`);
+    // // console.log(`message from ${socket.id} : ${message}`);
   })
   socket.use((event, next) => {
     jwtauth(socket, event, next);
@@ -57,30 +57,30 @@ io.on('connection', (socket) => {
   //     ConferenceServices.fetchConferences('all').then((result) => {
   //       socket.emit("conferences", result);
   //     }).catch((err) => {
-  //       console.log(err);
+  //       // console.log(err);
   //     });
   //   } else {
   //   let {confId} = message;
   //     ConferenceServices.fetchConferencesOne('all',confId).then((result) => {
-  //       console.log(result);
+  //       // console.log(result);
   //       socket.emit("conferences-one", result);
   //     }).catch((err) => {
-  //       console.log(err);
+  //       // console.log(err);
   //     });
   //   }
   // })
 
 
   socket.on('connect', (message) => {
-    console.log(`message from ${socket.id} : ${message}`);
+    // // console.log(`message from ${socket.id} : ${message}`);
   })
 
   socket.on('disconnect', () => {
-    console.log(`socket ${socket.id} disconnected`);
+    // // console.log(`socket ${socket.id} disconnected`);
   })
   socket.on('error', function (err) {
-    console.log('received error from client:', socket.id)
-    console.log(err)
+    // // console.log('received error from client:', socket.id)
+    // // console.log(err)
   })
 });
 
