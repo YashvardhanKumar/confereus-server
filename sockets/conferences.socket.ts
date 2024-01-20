@@ -67,7 +67,7 @@ export default class ConferenceSocket {
     editConferences(): void {
         let socket = this.socket;
         socket.on('conferences-edit', (...args) => {
-            let { confId } = args[2];
+            let { confId } = args[3];
             ConferenceServices.editConferences(confId,args[2])
             .then((data) => {
                 // console.log(data);

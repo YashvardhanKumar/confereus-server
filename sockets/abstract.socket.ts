@@ -74,7 +74,7 @@ class AbstractSocket {
     editAbstracts(): void {
         let socket = this.socket;
         socket.on('abstracts-edit', (...args) => {
-            let { absId } = args[2];
+            let { absId } = args[3];
             AbstractServices.editAbstract(args[2], absId)
                 .then((data) => {
                     // console.log(data);

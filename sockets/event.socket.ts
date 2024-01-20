@@ -74,7 +74,7 @@ export default class EventSocket {
     editEvents(): void {
         let socket = this.socket;
         socket.on('events-edit', (...args) => {
-            let { eventId } = args[2];
+            let { eventId } = args[3];
             EventServices.editEvents(args[2],eventId)
             .then((data) => {
                 // console.log(data);
