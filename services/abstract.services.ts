@@ -7,6 +7,7 @@ import { User } from "../models/User Profile Models/user.model";
 import ical, { ICalCalendarMethod } from "ical-generator";
 import { Event } from "../models/events.model";
 import { EventServices } from "./event.services";
+import ConferenceServices from "./conference.services";
 
 export class AbstractServices {
     static async fetchAbstract(confId: string, eventId: string) {
@@ -187,7 +188,7 @@ export class AbstractServices {
     }
     static async addAbstract(confId: string, userId: string, eventId: string, paperName: string, abstract: string, paperLink: string) {
         let ttl = (await Event.findById(eventId)).endTime
-        
+
         let data = new Abstract({ conferenceId: confId, eventId, userId, paperLink, abstract, paperName, endAt: ttl });
         // Abstract.watch().on('change', data => // console.log(data));
         await data.save();
@@ -202,6 +203,14 @@ export class AbstractServices {
 
     static async deleteAbstract(absId: string) {
         let data = await Abstract.findById(absId);
+        await Conference.findByIdAndUpdate(data.conferenceId, {
+            $pull: { abstractId: absId }
+        });
+        await Event.findByIdAndUpdate(data.eventId, {
+            $pull: {
+                abstractId: absId
+            }
+        });
         await Abstract.findByIdAndDelete(absId);
         return data;
     }

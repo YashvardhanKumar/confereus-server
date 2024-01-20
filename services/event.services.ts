@@ -23,7 +23,7 @@ export class EventServices {
     static async editEvents(bodydata: any, eventId: string) {
         let data = await Event.findByIdAndUpdate(eventId,
             {
-                $set: bodydata.data
+                $set: bodydata
             });
         return data;
     }

@@ -23,13 +23,15 @@ class AbstractSocket {
                     // console.log(err);
                 });
             else {
-                Abstract.findById(message.documentKey._id).then((value) => {
-                    AbstractServices.fetchAbstract(value.conferenceId.toString(), value.eventId.toString()).then((result) => {
-                        socket.emit("abstracts", result);
-                    }).catch((err) => {
-                        // console.log(err);
+                if (message.operationType !== 'delete')
+
+                    Abstract.findById(message.documentKey._id).then((value) => {
+                        AbstractServices.fetchAbstract(value.conferenceId.toString(), value.eventId.toString()).then((result) => {
+                            socket.emit("abstracts", result);
+                        }).catch((err) => {
+                            // console.log(err);
+                        });
                     });
-                });
             }
 
         });
@@ -87,9 +89,14 @@ class AbstractSocket {
     deleteConferences(): void {
         let socket = this.socket;
         socket.on('abstracts-delete', (...args) => {
-            let { absId } = args[2];
+            let { eventId, confId, absId } = args[2];
             AbstractServices.deleteAbstract(absId)
                 .then((data) => {
+                    AbstractServices.fetchAbstract(confId, eventId).then((result) => {
+                        socket.emit("abstracts", result);
+                    }).catch((err) => {
+                        // console.log(err);
+                    });
                     // console.log(data);
                 }).catch((err) => {
                     // console.log(err);

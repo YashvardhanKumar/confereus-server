@@ -31,7 +31,7 @@ export default class ConferenceSocket {
         let socket = this.socket;
         socket.on('conferences', (...args) => {
             // console.log(args);
-            
+
             let { confId } = args[2];
             if (!confId) {
                 ConferenceServices.fetchConferences('all').then((result) => {
@@ -56,24 +56,24 @@ export default class ConferenceSocket {
         socket.on('conferences-add', (...args) => {
             let { subject, about, startTime, endTime, admin, creator, location } = args[2];
             ConferenceServices.addConferences(subject, about, startTime, endTime, admin, creator, location)
-            .then((data) => {
-                // console.log(data);
-            }).catch((err) => {
-                // console.log(err);
-            });
+                .then((data) => {
+                    // console.log(data);
+                }).catch((err) => {
+                    // console.log(err);
+                });
         })
     }
 
     editConferences(): void {
         let socket = this.socket;
         socket.on('conferences-edit', (...args) => {
-            let { confId } = args[3];
-            ConferenceServices.editConferences(confId,args[2])
-            .then((data) => {
-                // console.log(data);
-            }).catch((err) => {
-                // console.log(err);
-            });
+            let { confId } = args[2][1];
+            ConferenceServices.editConferences(confId, args[2][0])
+                .then((data) => {
+                    // console.log(data);
+                }).catch((err) => {
+                    // console.log(err);
+                });
         })
     }
 
@@ -82,24 +82,24 @@ export default class ConferenceSocket {
         socket.on('conferences-delete', (...args) => {
             let { confId } = args[2];
             ConferenceServices.deleteConference(confId)
-            .then((data) => {
-                // console.log(data);
-            }).catch((err) => {
-                // console.log(err);
-            });
+                .then((data) => {
+                    // console.log(data);
+                }).catch((err) => {
+                    // console.log(err);
+                });
         })
     }
 
     registerConference(): void {
         let socket = this.socket;
         socket.on('conferences-register', (...args) => {
-            let { confId,userId } = args[2];
-            ConferenceServices.registerConferences(confId,userId)
-            .then((data) => {
-                // console.log(data);
-            }).catch((err) => {
-                // console.log(err);
-            });
+            let { confId, userId } = args[2];
+            ConferenceServices.registerConferences(confId, userId)
+                .then((data) => {
+                    // console.log(data);
+                }).catch((err) => {
+                    // console.log(err);
+                });
         })
     }
 }
