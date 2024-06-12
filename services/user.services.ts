@@ -71,7 +71,7 @@ class UserService {
         }
     }
     static generateToken(payload: jwt.JwtPayload, jwt_expire: number) {
-        const privateKey = fs.readFileSync(path.join(__dirname, '..', 'keys', 'rsa.key'), 'utf8')
+        const privateKey = process.env.PRIVATE_KEY;
         try {
             return jwt.sign(payload, privateKey, { expiresIn: jwt_expire, algorithm: 'RS256' });
         } catch (err) {
@@ -83,7 +83,7 @@ class UserService {
     static verifyToken(token: string, onError: Function = () => {
 
     }) {
-        const publicKey = fs.readFileSync(path.join(__dirname, '..', 'keys', 'rsa.key.pub'), 'utf8');
+        const publicKey = process.env.PUBLIC_KEY;
 
         try {
             return jwt.verify(token, publicKey, { algorithms: ['RS256'] });
