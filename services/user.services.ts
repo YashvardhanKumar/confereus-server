@@ -95,6 +95,21 @@ class UserService {
     }
 }
 
+import crypto from "crypto";
+
+let ephemeralKeyPair: { privateKey: string; publicKey: string } | null = null;
+
+function getEphemeralKeyPair() {
+    if (!ephemeralKeyPair) {
+        ephemeralKeyPair = crypto.generateKeyPairSync('rsa', {
+            modulusLength: 2048,
+            publicKeyEncoding: { type: 'spki', format: 'pem' },
+            privateKeyEncoding: { type: 'pkcs8', format: 'pem' }
+        });
+    }
+    return ephemeralKeyPair;
+}
+
 function getPrivateKey(): string {
     if (process.env.PRIVATE_KEY) {
         return process.env.PRIVATE_KEY.replace(/\\n/g, '\n');
@@ -109,7 +124,7 @@ function getPrivateKey(): string {
             return fs.readFileSync(p, 'utf8');
         }
     }
-    return '';
+    return getEphemeralKeyPair().privateKey;
 }
 
 function getPublicKey(): string {
@@ -126,7 +141,7 @@ function getPublicKey(): string {
             return fs.readFileSync(p, 'utf8');
         }
     }
-    return '';
+    return getEphemeralKeyPair().publicKey;
 }
 
 export default UserService;

@@ -1,7 +1,20 @@
 import UserService from '../services/user.services';
 import * as bcrypt from 'bcrypt';
+import * as crypto from 'crypto';
 
 describe('Auth & Token Services', () => {
+  beforeAll(() => {
+    if (!process.env.PRIVATE_KEY) {
+      const { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', {
+        modulusLength: 2048,
+        publicKeyEncoding: { type: 'spki', format: 'pem' },
+        privateKeyEncoding: { type: 'pkcs8', format: 'pem' }
+      });
+      process.env.PRIVATE_KEY = privateKey;
+      process.env.PUBLIC_KEY = publicKey;
+    }
+  });
+
   it('generates and verifies RS256 JWT tokens using RSA keys', () => {
     const payload = { email: 'test@confereus.com', userId: '12345' };
     const token = UserService.generateToken(payload, 3600);
