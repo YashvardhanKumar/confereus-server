@@ -1,5 +1,5 @@
 import { Socket } from "socket.io";
-import { User } from "../models/User Profile Models/user.model";
+import { User } from "../models/user_profile/user.model";
 import { ProfileController } from "../services/profile.services";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
 import { EventServices } from "../services/event.services";

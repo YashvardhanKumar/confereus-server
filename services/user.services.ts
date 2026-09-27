@@ -1,4 +1,4 @@
-import { User } from "../models/User Profile Models/user.model";
+import { User } from "../models/user_profile/user.model";
 import * as jwt from 'jsonwebtoken';
 import fs from "fs";
 import path from "path";
@@ -71,7 +71,7 @@ class UserService {
         }
     }
     static generateToken(payload: jwt.JwtPayload, jwt_expire: number) {
-        const privateKey = process.env.PRIVATE_KEY;
+        const privateKey = getPrivateKey();
         try {
             return jwt.sign(payload, privateKey, { expiresIn: jwt_expire, algorithm: 'RS256' });
         } catch (err) {
@@ -80,10 +80,10 @@ class UserService {
         }
     }
 
-    static verifyToken(token: string, onError: Function = () => {
+    static verifyToken(token: string, onError: () => void = () => {
 
     }) {
-        const publicKey = process.env.PUBLIC_KEY;
+        const publicKey = getPublicKey();
 
         try {
             return jwt.verify(token, publicKey, { algorithms: ['RS256'] });
@@ -93,6 +93,40 @@ class UserService {
             return err;
         }
     }
+}
+
+function getPrivateKey(): string {
+    if (process.env.PRIVATE_KEY) {
+        return process.env.PRIVATE_KEY.replace(/\\n/g, '\n');
+    }
+    const possiblePaths = [
+        path.join(__dirname, '..', 'keys', 'rsa.key'),
+        path.join(process.cwd(), 'keys', 'rsa.key'),
+        path.join(__dirname, 'keys', 'rsa.key'),
+    ];
+    for (const p of possiblePaths) {
+        if (fs.existsSync(p)) {
+            return fs.readFileSync(p, 'utf8');
+        }
+    }
+    return '';
+}
+
+function getPublicKey(): string {
+    if (process.env.PUBLIC_KEY) {
+        return process.env.PUBLIC_KEY.replace(/\\n/g, '\n');
+    }
+    const possiblePaths = [
+        path.join(__dirname, '..', 'keys', 'rsa.key.pub'),
+        path.join(process.cwd(), 'keys', 'rsa.key.pub'),
+        path.join(__dirname, 'keys', 'rsa.key.pub'),
+    ];
+    for (const p of possiblePaths) {
+        if (fs.existsSync(p)) {
+            return fs.readFileSync(p, 'utf8');
+        }
+    }
+    return '';
 }
 
 export default UserService;

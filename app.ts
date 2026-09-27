@@ -12,7 +12,9 @@ import profileRouter from './routes/user/profile/profile.router';
 import eventRoute from './routes/user/conference/event.router';
 import { diskStorage } from 'multer';
 import path from 'path';
+import fs from 'fs';
 import abstractRoute from './routes/user/conference/abstract.router';
+import notificationRouter from './routes/user/notification/notification.router';
 import { Server } from 'socket.io';
 import { Conference } from './models/conference.model';
 import ConferenceServices from './services/conference.services';
@@ -26,17 +28,17 @@ declare module 'express-session' {
   }
 }
 
-
-
 const app = express();
 let server = createServer(app);
 
 const io = new Server(server, {
   cors: {
-    methods: ['GET', 'POST', 'PUT'],
-    origin: ["http://localhost:3000", "http://0.0.0.0:3000", "http://192.168.64.144:3000", 'http://127.0.0.1:3000', "http://192.168.64.60:3000"],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    origin: (origin, callback) => {
+      // Allow any origin or requests without origin (like mobile Flutter apps)
+      callback(null, true);
+    },
     credentials: true,
-
   }
 })
 
@@ -85,18 +87,27 @@ io.on('connection', (socket) => {
 });
 
 
+app.use(cors({
+    origin: (origin, callback) => callback(null, true),
+    credentials: true,
+}));
 app.use(cookieParser());
-app.use(express.json())
-// app.use(cors(
-//     {
-//     origin: ["http://localhost:3000", "http://127.0.0.1:3000", "http://192.168.64.144:3000"],
-//     credentials: true,
-// }
-// ));
+app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-// app.use(express.urlencoded({extended: true}));
 app.use(bodyParser.json());
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+const uploadsPath = fs.existsSync(path.join(__dirname, 'uploads')) 
+    ? path.join(__dirname, 'uploads') 
+    : path.join(process.cwd(), 'uploads');
+app.use('/uploads', express.static(uploadsPath));
+
+app.get('/', (req, res) => {
+    res.send('hello');
+});
+
+app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'healthy', timestamp: new Date().toISOString() });
+});
 
 app.use('/', userRouter);
 app.use('/applink/r', deeplinkRouter);
@@ -104,6 +115,7 @@ app.use('/:id/conferences', conferenceRoute);
 app.use('/:id/conferences/:confId/events', eventRoute);
 app.use('/:id/conferences/:confId/abstract', abstractRoute);
 app.use('/:id/profile', profileRouter);
+app.use('/:id/notifications', notificationRouter);
 
 
 // app.use('/:id/profile');

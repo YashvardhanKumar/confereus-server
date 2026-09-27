@@ -3,7 +3,7 @@ import { Abstract } from "../models/abstract.model";
 import { Request } from "express";
 import { Conference } from "../models/conference.model";
 import { createTransport } from "nodemailer";
-import { User } from "../models/User Profile Models/user.model";
+import { User } from "../models/user_profile/user.model";
 import ical, { ICalCalendarMethod } from "ical-generator";
 import { Event } from "../models/events.model";
 import { EventServices } from "./event.services";

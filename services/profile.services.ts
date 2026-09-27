@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
-import { User } from "../models/User Profile Models/user.model";
+import { User } from "../models/user_profile/user.model";
 
 export class ProfileController {
     static async fetchProfileOne(id: string) {

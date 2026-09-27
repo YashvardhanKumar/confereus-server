@@ -12,7 +12,7 @@ export interface IConference {
     visibility: string,
     startTime: Date,
     endTime: Date,
-    eventLogo: String,
+    eventLogo: string,
     eventsId: [Schema.Types.ObjectId],
 }
 

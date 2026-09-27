@@ -1,5 +1,5 @@
 import { Socket } from "socket.io";
-import { Event, SocketReservedEventsMap } from "socket.io/dist/socket";
+import { Event } from "socket.io/dist/socket";
 import UserService from "../services/user.services";
 import { Blacklist } from "../models/blacklist.model";
 import { JwtPayload } from "jsonwebtoken";

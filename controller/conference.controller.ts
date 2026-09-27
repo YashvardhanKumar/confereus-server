@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { User } from "../models/User Profile Models/user.model";
+import { User } from "../models/user_profile/user.model";
 import { Conference } from "../models/conference.model";
 import mongoose, { Schema, Types } from "mongoose";
 import { createReadStream, createWriteStream, unlinkSync, writeFileSync } from "fs";

@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import UserService from "../services/user.services";
-import { User } from "../models/User Profile Models/user.model";
+import { User } from "../models/user_profile/user.model";
 import { JwtPayload } from "jsonwebtoken";
 import { Blacklist } from "../models/blacklist.model";
 import { ProfileController } from "../services/profile.services";
@@ -66,7 +66,7 @@ export async function verifiedEmail(req: Request, res: Response) {
         if (!data) {
             return res.json({ status: false, success: "Session Expired" });
         }
-        var user = await User.findOneAndUpdate({ email: data.email }, {
+        const user = await User.findOneAndUpdate({ email: data.email }, {
             $set: {
                 emailVerified: true,
             }

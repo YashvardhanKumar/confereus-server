@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { User } from "../models/User Profile Models/user.model";
-import { WorkExperience, WorkExperienceSchema } from "../models/User Profile Models/sub_documents/work_experience.model";
-import { Education } from "../models/User Profile Models/sub_documents/education.model";
-import { Skills } from "../models/User Profile Models/sub_documents/skills.model";
+import { User } from "../models/user_profile/user.model";
+import { WorkExperience, WorkExperienceSchema } from "../models/user_profile/sub_documents/work_experience.model";
+import { Education } from "../models/user_profile/sub_documents/education.model";
+import { Skills } from "../models/user_profile/sub_documents/skills.model";
 import { Types } from "mongoose";
 import { ProfileController } from "../services/profile.services";
 

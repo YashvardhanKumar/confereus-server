@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import UserService from "../services/user.services";
-import { User } from "../models/User Profile Models/user.model";
+import { User } from "../models/user_profile/user.model";
 import { JwtPayload } from "jsonwebtoken";
 import { Conference } from "../models/conference.model";
 import ConferenceServices from "../services/conference.services";

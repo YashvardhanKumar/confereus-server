@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { User } from "../models/User Profile Models/user.model";
+import { User } from "../models/user_profile/user.model";
 import * as bcrypt from "bcrypt";
 import { createTransport } from "nodemailer";
 import { Blacklist } from "../models/blacklist.model";
